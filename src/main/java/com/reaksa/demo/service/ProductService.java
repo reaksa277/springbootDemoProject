@@ -85,10 +85,10 @@ public class ProductService {
                 .body(new BaseResponseModel("success", "successfully deleted product id : " + productId));
     }
 
-    public ResponseEntity<BaseResponseWithDataModel> searchProduct(String name) {
+    public ResponseEntity<BaseResponseWithDataModel> searchProduct(String name, Double minPrice, Double maxPrice) {
         String formatedName = name != null ? name.toLowerCase() : null;
 
-        List<Product> product = productRepository.findProductsWithFilters(formatedName);
+        List<Product> product = productRepository.findProductsWithFilters(formatedName, minPrice, maxPrice);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseWithDataModel("success", "successfully search product with filters", product));
