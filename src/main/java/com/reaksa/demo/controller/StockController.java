@@ -25,4 +25,14 @@ public class StockController {
     public ResponseEntity<BaseResponseModel> addStock(@RequestBody StockModel payload) {
         return stockService.createStock(payload);
     }
+
+    @PutMapping("/{stockId}")
+    public ResponseEntity<BaseResponseModel> updateStock(@PathVariable("stockId") Long stockId, @RequestBody StockModel payload) {
+        return stockService.updateStock(stockId, payload);
+    }
+
+    @DeleteMapping("/{stockId}")
+    public ResponseEntity<BaseResponseModel> deleteStock(@PathVariable("stockId") Long stockId) {
+        return stockService.deleteStock(stockId);
+    }
 }

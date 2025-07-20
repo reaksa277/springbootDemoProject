@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StockService {
@@ -26,7 +27,7 @@ public class StockService {
                 .body(new BaseResponseWithDataModel("success", "successfully list stock!", stocks));
     }
 
-    public ResponseEntity<BaseResponseModel> createStock(@RequestBody StockModel stock) {
+    public ResponseEntity<BaseResponseModel> createStock(StockModel stock) {
         Stock  stockEntity = new Stock();
 
         stockEntity.setProductId(stock.getProductId());
@@ -37,6 +38,38 @@ public class StockService {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseModel("success", "successfully created stock"));
+    }
+
+    public ResponseEntity<BaseResponseModel> updateStock(Long stockId, StockModel stock) {
+        Optional<Stock> stockEntity = stockRepository.findById(stockId);
+
+        if(stockEntity.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new BaseResponseModel("fail", "stock not found id : " + stockId));
+        }
+
+        Stock updatedStock = stockEntity.get();
+        updatedStock.setProductId(stock.getProductId());
+        updatedStock.setQuantity(stock.getQuantity());
+        updatedStock.setUpdatedAt(LocalDateTime.now());
+        stockRepository.save(updatedStock);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseModel("success", "successfully updated stock id : " + stockId));
+    }
+
+    public ResponseEntity<BaseResponseModel> deleteStock(Long stockId) {
+        Optional<Stock> stockEntity = stockRepository.findById(stockId);
+
+        if(stockEntity.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new BaseResponseModel("fail", "stock not found id : " + stockId));
+        }
+
+        stockRepository.deleteById(stockId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(new BaseResponseModel("success", "successfully deleted stock id : " + stockId));
     }
 
 }
