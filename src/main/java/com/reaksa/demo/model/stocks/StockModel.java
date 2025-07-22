@@ -1,4 +1,4 @@
-package com.reaksa.demo.model;
+package com.reaksa.demo.model.stocks;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StockModel {
     private Long productId;
-    private Long quantity;
+    private Integer quantity;
 }

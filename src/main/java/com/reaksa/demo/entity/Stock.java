@@ -16,7 +16,7 @@ public class Stock {
     @Column( name = "product_id")
     private Long productId;
 
-    private Long quantity;
+    private Integer quantity;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
