@@ -1,4 +1,4 @@
-package com.reaksa.demo.model;
+package com.reaksa.demo.dto;
 
 
 import lombok.*;
@@ -6,11 +6,12 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserModel {
+public class UserDto {
     private Long id;
     private String name;
     private Integer age;
     private String address;
+    private String password;
     private String email;
     private String role;
 
