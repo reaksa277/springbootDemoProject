@@ -1,9 +1,11 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.dto.UserResponseDto;
 import com.reaksa.demo.entity.User;
+import com.reaksa.demo.mapper.UserMapper;
 import com.reaksa.demo.model.BaseResponseModel;
-import com.reaksa.demo.model.UserModel;
-import com.reaksa.demo.model.UserResponseModel;
+import com.reaksa.demo.model.BaseResponseWithDataModel;
+import com.reaksa.demo.dto.UserDto;
 import com.reaksa.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,27 +21,51 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private List<UserModel> users = new ArrayList<>(Arrays.asList(
-            new UserModel(1L, "Reaksa", 23, "Phnom Penh", "example@gmail.com", "admin")
-    ));
+    @Autowired
+    private UserMapper mapper;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public ResponseEntity<UserResponseModel> getUser() {
+    public ResponseEntity<BaseResponseWithDataModel> listUser() {
         List<User> userData = userRepository.findAll();
+
+        List<UserResponseDto> dtos = mapper.toDtoList(userData);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new UserResponseModel("success", "successfully retrieved  users", userData));
+                .body(new BaseResponseWithDataModel("success", "successfully retrieved  users", dtos));
     }
 
-    public ResponseEntity<BaseResponseModel> addUser( UserModel payload) {
+    public ResponseEntity<BaseResponseWithDataModel> getUser(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new BaseResponseWithDataModel("fail", "user not found with id " + userId, null ));
+        }
+
+        UserResponseDto dto = mapper.toDto(user.get());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseWithDataModel("success", "successfully retrieve user", dto));
+    }
+
+    public ResponseEntity<BaseResponseModel> addUser( UserDto payload) {
+
+        // validate if username is existed
+        if(userRepository.existsByName(payload.getName())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new BaseResponseModel("fail", "username already exists"));
+        }
+        if(userRepository.existsByEmail(payload.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new BaseResponseModel("fail", "email already exists"));
+        }
+
         User user = new User();
         user.setName(payload.getName());
         user.setAddress(payload.getAddress());
         user.setAge(payload.getAge());
+        user.setPassword(payload.getPassword());
         user.setEmail(payload.getEmail());
-        user.setCreateAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now());
         user.setRole(payload.getRole());
         userRepository.save(user);
 
@@ -51,7 +75,7 @@ public class UserService {
                 .body(new BaseResponseModel("success", "Successfully created user"));
     }
 
-    public ResponseEntity<BaseResponseModel> updateUser(Long userId, UserModel payload) {
+    public ResponseEntity<BaseResponseModel> updateUser(Long userId, UserDto payload) {
         Optional<User> existing = userRepository.findById(userId);
 
         // if user not found, then response 404

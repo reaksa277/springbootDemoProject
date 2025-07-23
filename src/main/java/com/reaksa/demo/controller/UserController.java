@@ -1,17 +1,12 @@
 package com.reaksa.demo.controller;
 
 import com.reaksa.demo.model.BaseResponseModel;
-import com.reaksa.demo.model.UserModel;
-import com.reaksa.demo.model.UserResponseModel;
+import com.reaksa.demo.model.BaseResponseWithDataModel;
+import com.reaksa.demo.dto.UserDto;
 import com.reaksa.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -25,19 +20,24 @@ public class UserController {
 
     // used to retrieve user list
     @GetMapping
-    public ResponseEntity<UserResponseModel> listUsers() {
-        return userService.getUser();
+    public ResponseEntity<BaseResponseWithDataModel> listUsers() {
+        return userService.listUser();
+    }
+
+    @GetMapping("/{user_id}")
+    public ResponseEntity<BaseResponseWithDataModel> getUser(@PathVariable Long user_id) {
+        return userService.getUser(user_id);
     }
 
     // used for create/inserting record
     // request body can be called request
     @PostMapping
-    public ResponseEntity<BaseResponseModel> addUser(@RequestBody UserModel payload) {
+    public ResponseEntity<BaseResponseModel> addUser(@RequestBody UserDto payload) {
         return userService.addUser(payload);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<BaseResponseModel> updateUser(@PathVariable("userId") Long userId ,@RequestBody UserModel payload) {
+    public ResponseEntity<BaseResponseModel> updateUser(@PathVariable("userId") Long userId ,@RequestBody UserDto payload) {
         return userService.updateUser(userId, payload);
     }
 

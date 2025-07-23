@@ -14,9 +14,24 @@ public class User {
     private Long id;
     private String name;
     private Integer age;
+    private String password;
     private String address;
     private String email;
     private String role;
-    @Column(name = "create_at")
-    private LocalDateTime createAt;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

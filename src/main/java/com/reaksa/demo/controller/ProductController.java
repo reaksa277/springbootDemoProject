@@ -16,7 +16,7 @@ public class ProductController {
 
 
     @GetMapping
-    public ResponseEntity<BaseResponseWithDataModel> getProducts() {
+    public ResponseEntity<BaseResponseWithDataModel> listProduct() {
         return productService.listProducts();
     }
 
