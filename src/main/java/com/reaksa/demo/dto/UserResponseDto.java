@@ -1,11 +1,13 @@
 package com.reaksa.demo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@JsonPropertyOrder({"user_id","username", "email", "age", "address", "role", "created_at", "updated_at"})
 public class UserResponseDto {
     @JsonProperty("user_id")
     private Long id;
