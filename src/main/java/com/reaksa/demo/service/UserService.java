@@ -59,14 +59,7 @@ public class UserService {
                     .body(new BaseResponseModel("fail", "email already exists"));
         }
 
-        User user = new User();
-        user.setName(payload.getName());
-        user.setAddress(payload.getAddress());
-        user.setAge(payload.getAge());
-        user.setPassword(payload.getPassword());
-        user.setEmail(payload.getEmail());
-        user.setCreatedAt(LocalDateTime.now());
-        user.setRole(payload.getRole());
+        User user = mapper.toEntity(payload);
         userRepository.save(user);
 
 

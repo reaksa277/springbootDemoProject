@@ -1,15 +1,31 @@
 package com.reaksa.demo.mapper;
 
+import com.reaksa.demo.dto.UserDto;
 import com.reaksa.demo.dto.UserResponseDto;
 import com.reaksa.demo.entity.User;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
+
+    public User toEntity(UserDto dto) {
+        User entity = new User();
+
+        entity.setName(dto.getName());
+        entity.setPassword(dto.getPassword());
+        entity.setEmail(dto.getEmail());
+        entity.setAddress(dto.getAddress());
+        entity.setAge(dto.getAge());
+        entity.setRole(dto.getRole());
+        entity.setCreatedAt(LocalDateTime.now());
+
+        return entity;
+    }
 
     public UserResponseDto toDto(User entity) {
         UserResponseDto dto = new UserResponseDto();
