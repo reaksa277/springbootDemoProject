@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,11 +76,7 @@ public class UserService {
         }
 
         User updatedUser = existing.get();
-        updatedUser.setName(payload.getName());
-        updatedUser.setAddress(payload.getAddress());
-        updatedUser.setAge(payload.getAge());
-        updatedUser.setEmail(payload.getEmail());
-        updatedUser.setRole(payload.getRole());
+        mapper.updateEntityFromDto(updatedUser, payload);
 
         userRepository.save(updatedUser);
 

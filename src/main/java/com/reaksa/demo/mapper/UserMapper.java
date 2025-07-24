@@ -27,6 +27,19 @@ public class UserMapper {
         return entity;
     }
 
+    public void updateEntityFromDto(User entity, UserDto dto) {
+        if (entity == null || dto == null) {
+            return;
+        }
+
+        entity.setName(dto.getName());
+        entity.setAge(dto.getAge());
+        entity.setEmail(dto.getEmail());
+        entity.setAddress(dto.getAddress());
+        entity.setPassword(dto.getPassword());
+        entity.setRole(dto.getRole());
+    }
+
     public UserResponseDto toDto(User entity) {
         UserResponseDto dto = new UserResponseDto();
 
