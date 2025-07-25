@@ -88,7 +88,7 @@ public class UserService {
 
     public ResponseEntity<BaseResponseModel> deleteUser(Long userId) {
 
-        if (userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new BaseResponseModel("error", "User not found id: " + userId));
         }
