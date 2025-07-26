@@ -1,6 +1,8 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.dto.ProductResponseDto;
 import com.reaksa.demo.entity.Product;
+import com.reaksa.demo.mapper.ProductMapper;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.ProductDto;
@@ -19,11 +21,16 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private ProductMapper mapper;
+
     public ResponseEntity<BaseResponseWithDataModel> listProducts() {
         List<Product> products = productRepository.findAll();
 
+        List<ProductResponseDto> dtos = mapper.toDtoList(products);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully list products", products));
+                .body(new BaseResponseWithDataModel("success", "successfully list products", dtos));
     }
 
     public ResponseEntity<BaseResponseWithDataModel> getProduct(Long productId) {
@@ -34,18 +41,15 @@ public class ProductService {
                     .body(new BaseResponseWithDataModel("fail", "product not found with id : " + productId, null));
         }
 
+        ProductResponseDto dto = mapper.toDto(product.get());
+
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully retrieve product ", product.get()));
+                .body(new BaseResponseWithDataModel("success", "successfully retrieve product ", dto));
     }
 
     public ResponseEntity<BaseResponseModel> createProduct(ProductDto product) {
-        Product productEntity = new Product();
-
-        productEntity.setProductName(product.getProductName());
-        productEntity.setPrice(product.getPrice());
-        productEntity.setDescription(product.getDescription());
-        productEntity.setCreatedAt(LocalDateTime.now());
+        Product productEntity = mapper.toEntity(product);
 
         productRepository.save(productEntity);
 
@@ -62,10 +66,7 @@ public class ProductService {
         }
 
         Product updatedProduct = existing.get();
-        updatedProduct.setProductName(product.getProductName());
-        updatedProduct.setPrice(product.getPrice());
-        updatedProduct.setDescription(product.getDescription());
-        updatedProduct.setUpdatedAt(LocalDateTime.now());
+        mapper.updateEntityFromDto(updatedProduct, product);
 
         productRepository.save(updatedProduct);
 
