@@ -1,4 +1,4 @@
-package com.reaksa.demo.model;
+package com.reaksa.demo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductModel {
+public class ProductDto {
     private String productName;
     private Double price;
     private String description;

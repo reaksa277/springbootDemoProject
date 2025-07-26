@@ -3,7 +3,7 @@ package com.reaksa.demo.service;
 import com.reaksa.demo.entity.Product;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
-import com.reaksa.demo.model.ProductModel;
+import com.reaksa.demo.dto.ProductDto;
 import com.reaksa.demo.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ public class ProductService {
                 .body(new BaseResponseWithDataModel("success", "successfully retrieve product ", product.get()));
     }
 
-    public ResponseEntity<BaseResponseModel> createProduct(ProductModel product) {
+    public ResponseEntity<BaseResponseModel> createProduct(ProductDto product) {
         Product productEntity = new Product();
 
         productEntity.setProductName(product.getProductName());
@@ -53,7 +53,7 @@ public class ProductService {
                 .body(new BaseResponseModel("success", "successfully created product"));
     }
 
-    public ResponseEntity<BaseResponseModel> updateProduct(Long productId, ProductModel product) {
+    public ResponseEntity<BaseResponseModel> updateProduct(Long productId, ProductDto product) {
         Optional<Product> existing = productRepository.findById(productId);
 
         if(existing.isEmpty()){

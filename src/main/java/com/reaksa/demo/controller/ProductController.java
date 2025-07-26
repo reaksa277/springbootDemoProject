@@ -2,7 +2,7 @@ package com.reaksa.demo.controller;
 
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
-import com.reaksa.demo.model.ProductModel;
+import com.reaksa.demo.dto.ProductDto;
 import com.reaksa.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +26,12 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponseModel> createProduct(@RequestBody ProductModel payload) {
+    public ResponseEntity<BaseResponseModel> createProduct(@RequestBody ProductDto payload) {
         return productService.createProduct(payload);
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<BaseResponseModel> updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductModel payload) {
+    public ResponseEntity<BaseResponseModel> updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductDto payload) {
         return productService.updateProduct(productId, payload);
     }
 
