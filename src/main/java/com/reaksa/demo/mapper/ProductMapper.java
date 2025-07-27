@@ -1,7 +1,7 @@
 package com.reaksa.demo.mapper;
 
-import com.reaksa.demo.dto.ProductDto;
-import com.reaksa.demo.dto.ProductResponseDto;
+import com.reaksa.demo.dto.Product.ProductDto;
+import com.reaksa.demo.dto.Product.ProductResponseDto;
 import com.reaksa.demo.entity.Product;
 import org.springframework.stereotype.Component;
 

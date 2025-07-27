@@ -2,7 +2,7 @@ package com.reaksa.demo.controller;
 
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
-import com.reaksa.demo.dto.ProductDto;
+import com.reaksa.demo.dto.Product.ProductDto;
 import com.reaksa.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,18 +1,17 @@
 package com.reaksa.demo.service;
 
-import com.reaksa.demo.dto.ProductResponseDto;
+import com.reaksa.demo.dto.Product.ProductResponseDto;
 import com.reaksa.demo.entity.Product;
 import com.reaksa.demo.mapper.ProductMapper;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
-import com.reaksa.demo.dto.ProductDto;
+import com.reaksa.demo.dto.Product.ProductDto;
 import com.reaksa.demo.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
