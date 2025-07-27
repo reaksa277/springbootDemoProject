@@ -44,7 +44,7 @@ public class ProductService {
 
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully retrieve product ", dto));
+                .body(new BaseResponseWithDataModel("success", "successfully retrieve product", dto));
     }
 
     public ResponseEntity<BaseResponseModel> createProduct(ProductDto product) {
