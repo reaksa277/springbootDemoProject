@@ -1,10 +1,13 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.dto.Stock.StockResponseDto;
 import com.reaksa.demo.entity.Stock;
+import com.reaksa.demo.mapper.StockMapper;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
-import com.reaksa.demo.model.stocks.StockModel;
-import com.reaksa.demo.model.stocks.UpdateStockModel;
+import com.reaksa.demo.dto.Stock.StockDto;
+import com.reaksa.demo.dto.Stock.UpdateStockDto;
+import com.reaksa.demo.repository.ProductRepository;
 import com.reaksa.demo.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,19 +23,43 @@ public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private StockMapper mapper;
+
     public ResponseEntity<BaseResponseWithDataModel> listStock() {
         List<Stock> stocks = stockRepository.findAll();
 
+        List<StockResponseDto> dtos = mapper.toListDto(stocks);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully list stock!", stocks));
+                .body(new BaseResponseWithDataModel("success", "successfully list stock!", dtos));
     }
 
-    public ResponseEntity<BaseResponseModel> createStock(StockModel stock) {
-        Stock  stockEntity = new Stock();
+    public ResponseEntity<BaseResponseWithDataModel> getStock(Long stockId) {
+        Optional<Stock> stock = stockRepository.findById(stockId);
 
-        stockEntity.setProductId(stock.getProductId());
-        stockEntity.setQuantity(stock.getQuantity());
-        stockEntity.setCreatedAt(LocalDateTime.now());
+        if(stock.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new BaseResponseWithDataModel("fail", "product not found with id : " + stockId, null));
+        }
+
+        StockResponseDto dto = mapper.toDto(stock.get());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseWithDataModel("success", "successfully retrieve product!", dto));
+    }
+
+    public ResponseEntity<BaseResponseModel> createStock(StockDto stock) {
+
+        // product not found
+        if (!productRepository.existsById(stock.getProductId())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new BaseResponseModel("fail", "product not found with id : " + stock.getProductId()));
+        }
+        Stock  stockEntity = mapper.toEntity(stock);
 
         stockRepository.save(stockEntity);
 
@@ -40,7 +67,9 @@ public class StockService {
                 .body(new BaseResponseModel("success", "successfully created stock"));
     }
 
-    public ResponseEntity<BaseResponseModel> updateStock(Long stockId, StockModel stock) {
+    // update stock
+    /*
+    public ResponseEntity<BaseResponseModel> updateStock(Long stockId, StockDto stock) {
         Optional<Stock> stockEntity = stockRepository.findById(stockId);
 
         if(stockEntity.isEmpty()) {
@@ -49,16 +78,16 @@ public class StockService {
         }
 
         Stock updatedStock = stockEntity.get();
-        updatedStock.setProductId(stock.getProductId());
-        updatedStock.setQuantity(stock.getQuantity());
-        updatedStock.setUpdatedAt(LocalDateTime.now());
+        mapper.updateEntityFromDto(updatedStock, stock);
+
         stockRepository.save(updatedStock);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseModel("success", "successfully updated stock id : " + stockId));
     }
+    */
 
-    public ResponseEntity<BaseResponseModel> adjustQuantity(Long stockId, UpdateStockModel updateStock) {
+    public ResponseEntity<BaseResponseModel> adjustQuantity(Long stockId, UpdateStockDto updateStock) {
         Optional<Stock> existingStock = stockRepository.findById(stockId);
 
         // stock not found in DB
@@ -68,6 +97,7 @@ public class StockService {
         }
 
         Stock  stock = existingStock.get();
+
         if(updateStock.getOperationType() == 1) {
             int newQty = stock.getQuantity() + updateStock.getQuantity();
 

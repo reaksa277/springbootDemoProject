@@ -1,4 +1,4 @@
-package com.reaksa.demo.model.stocks;
+package com.reaksa.demo.dto.Stock;
 
 import lombok.Data;
 

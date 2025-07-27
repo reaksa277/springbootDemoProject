@@ -2,8 +2,8 @@ package com.reaksa.demo.controller;
 
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
-import com.reaksa.demo.model.stocks.StockModel;
-import com.reaksa.demo.model.stocks.UpdateStockModel;
+import com.reaksa.demo.dto.Stock.StockDto;
+import com.reaksa.demo.dto.Stock.UpdateStockDto;
 import com.reaksa.demo.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,23 +16,28 @@ public class StockController {
     private StockService stockService;
 
     @GetMapping
-    public ResponseEntity<BaseResponseWithDataModel> getStock() {
+    public ResponseEntity<BaseResponseWithDataModel> listStock() {
         return stockService.listStock();
     }
 
+    @GetMapping("/{stockID}")
+    public ResponseEntity<BaseResponseWithDataModel> getStock(@PathVariable Long stockID) {
+        return stockService.getStock(stockID);
+    }
+
     @PostMapping
-    public ResponseEntity<BaseResponseModel> addStock(@RequestBody StockModel payload) {
+    public ResponseEntity<BaseResponseModel> addStock(@RequestBody StockDto payload) {
         return stockService.createStock(payload);
     }
 
-    @PutMapping("/{stockId}")
-    public ResponseEntity<BaseResponseModel> updateStock(@PathVariable("stockId") Long stockId, @RequestBody StockModel payload) {
-        return stockService.updateStock(stockId, payload);
-    }
+//    @PutMapping("/{stockId}")
+//    public ResponseEntity<BaseResponseModel> updateStock(@PathVariable("stockId") Long stockId, @RequestBody StockDto payload) {
+//        return stockService.updateStock(stockId, payload);
+//    }
 
     @PatchMapping("/{stockId}")
     public ResponseEntity<BaseResponseModel> adjustQuantity(@PathVariable("stockId") Long stockId, @RequestBody
-    UpdateStockModel payload) {
+    UpdateStockDto payload) {
         return stockService.adjustQuantity(stockId, payload);
     }
 
