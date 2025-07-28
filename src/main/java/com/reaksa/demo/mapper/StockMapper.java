@@ -2,6 +2,7 @@ package com.reaksa.demo.mapper;
 
 import com.reaksa.demo.dto.Stock.StockDto;
 import com.reaksa.demo.dto.Stock.StockResponseDto;
+import com.reaksa.demo.entity.Product;
 import com.reaksa.demo.entity.Stock;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +13,10 @@ import java.util.stream.Collectors;
 @Component
 public class StockMapper {
 
-    public Stock toEntity(StockDto dto) {
+    public Stock toEntity(StockDto dto, Product product) {
         Stock entity = new Stock();
 
-        entity.setProductId(dto.getProductId());
+        entity.setProduct(product);
         entity.setQuantity(dto.getQuantity());
 
         return entity;
@@ -39,7 +40,7 @@ public class StockMapper {
         StockResponseDto dto = new StockResponseDto();
 
         dto.setId(entity.getId());
-        dto.setProductId(entity.getProductId());
+        dto.setProductId(entity.getProduct().getId());
         dto.setQty(entity.getQuantity());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());

@@ -1,6 +1,7 @@
 package com.reaksa.demo.service;
 
 import com.reaksa.demo.dto.Stock.StockResponseDto;
+import com.reaksa.demo.entity.Product;
 import com.reaksa.demo.entity.Stock;
 import com.reaksa.demo.mapper.StockMapper;
 import com.reaksa.demo.model.BaseResponseModel;
@@ -53,13 +54,14 @@ public class StockService {
     }
 
     public ResponseEntity<BaseResponseModel> createStock(StockDto stock) {
+        Optional<Product> existingProduct = productRepository.findById(stock.getProductId());
 
         // product not found
         if (!productRepository.existsById(stock.getProductId())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new BaseResponseModel("fail", "product not found with id : " + stock.getProductId()));
         }
-        Stock  stockEntity = mapper.toEntity(stock);
+        Stock  stockEntity = mapper.toEntity(stock,  existingProduct.get());
 
         stockRepository.save(stockEntity);
 
