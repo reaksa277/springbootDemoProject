@@ -1,5 +1,6 @@
 package com.reaksa.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,7 +27,16 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
-    private List<Stock> socks;
+    private List<Stock> stocks;
+
+    @Transient
+    public Long getTotalStock() {
+        if (stocks == null) return 0L;
+
+        return stocks.stream()
+                .mapToLong(stock -> stock.getQuantity())
+                .sum();
+    }
 
     @PrePersist
     public void prePersist() {

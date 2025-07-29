@@ -39,6 +39,7 @@ public class ProductMapper {
         dto.setId(entity.getId());
         dto.setProductName(entity.getProductName());
         dto.setPrice(entity.getPrice());
+        dto.setTotalPrice(entity.getTotalStock());
         dto.setDescription(entity.getDescription());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
