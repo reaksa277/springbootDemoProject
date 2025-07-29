@@ -57,7 +57,7 @@ public class StockService {
         Optional<Product> existingProduct = productRepository.findById(stock.getProductId());
 
         // product not found
-        if (!productRepository.existsById(stock.getProductId())) {
+        if (existingProduct.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new BaseResponseModel("fail", "product not found with id : " + stock.getProductId()));
         }
