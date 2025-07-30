@@ -1,11 +1,11 @@
 package com.reaksa.demo.service;
 
-import com.reaksa.demo.dto.UserResponseDto;
+import com.reaksa.demo.dto.User.UserResponseDto;
 import com.reaksa.demo.entity.User;
 import com.reaksa.demo.mapper.UserMapper;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
-import com.reaksa.demo.dto.UserDto;
+import com.reaksa.demo.dto.User.UserDto;
 import com.reaksa.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

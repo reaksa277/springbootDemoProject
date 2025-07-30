@@ -1,4 +1,4 @@
-package com.reaksa.demo.dto;
+package com.reaksa.demo.dto.User;
 
 
 import lombok.*;

@@ -1,7 +1,7 @@
 package com.reaksa.demo.mapper;
 
-import com.reaksa.demo.dto.UserDto;
-import com.reaksa.demo.dto.UserResponseDto;
+import com.reaksa.demo.dto.User.UserDto;
+import com.reaksa.demo.dto.User.UserResponseDto;
 import com.reaksa.demo.entity.User;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;

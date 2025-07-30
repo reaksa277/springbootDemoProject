@@ -1,4 +1,4 @@
-package com.reaksa.demo.dto;
+package com.reaksa.demo.dto.User;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
