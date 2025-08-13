@@ -1,16 +1,16 @@
 package com.reaksa.demo.model;
 
-import com.reaksa.demo.entity.Product;
-import lombok.Getter;
 
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class BaseResponseWithDataModel extends BaseResponseModel {
-    private Object products;
+    private Object data;
 
-    public BaseResponseWithDataModel(String status, String message, Object products) {
+    public BaseResponseWithDataModel(String status, String message, Object data) {
         super(status, message);
-        this.products = products;
+        this.data = data;
     }
 }
