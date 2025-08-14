@@ -2,6 +2,7 @@ package com.reaksa.demo.service;
 
 import com.reaksa.demo.dto.Product.ProductResponseDto;
 import com.reaksa.demo.entity.Product;
+import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.mapper.ProductMapper;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
@@ -33,21 +34,20 @@ public class ProductService {
     }
 
     public ResponseEntity<BaseResponseWithDataModel> getProduct(Long productId) {
-        Optional<Product> product = productRepository.findById(productId);
 
-        if(product.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new BaseResponseWithDataModel("fail", "product not found with id : " + productId, null));
-        }
-
-        ProductResponseDto dto = mapper.toDto(product.get());
-
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("product not found with id : " + productId));
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully retrieve product", dto));
+                .body(new BaseResponseWithDataModel("success", "successfully retrieve product", product));
     }
 
     public ResponseEntity<BaseResponseModel> createProduct(ProductDto product) {
+        // validate if product is already exist
+        if (productRepository.existsByProductName(product.getProductName())) {
+            throw new ResourceNotFoundException("product is already existed");
+        }
+
         Product productEntity = mapper.toEntity(product);
 
         productRepository.save(productEntity);
@@ -57,17 +57,13 @@ public class ProductService {
     }
 
     public ResponseEntity<BaseResponseModel> updateProduct(Long productId, ProductDto product) {
-        Optional<Product> existing = productRepository.findById(productId);
 
-        if(existing.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new BaseResponseModel("fail", " product not found id : " + productId));
-        }
+        Product existing = productRepository.findById(productId)
+                        .orElseThrow(() -> new ResourceNotFoundException("product not found with id : " + productId));
 
-        Product updatedProduct = existing.get();
-        mapper.updateEntityFromDto(updatedProduct, product);
+        mapper.updateEntityFromDto(existing, product);
 
-        productRepository.save(updatedProduct);
+        productRepository.save(existing);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseModel("success", "successfully updated product id : " + productId));
@@ -75,8 +71,7 @@ public class ProductService {
 
     public ResponseEntity<BaseResponseModel> deleteProduct(Long productId) {
         if(!productRepository.existsById(productId)){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new BaseResponseModel("fail", " product not found id : " + productId));
+            throw new ResourceNotFoundException("product not found with id : " + productId);
         }
 
         productRepository.deleteById(productId);
