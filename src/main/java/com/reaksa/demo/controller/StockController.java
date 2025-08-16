@@ -5,6 +5,7 @@ import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.Stock.StockDto;
 import com.reaksa.demo.dto.Stock.UpdateStockDto;
 import com.reaksa.demo.service.StockService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class StockController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponseModel> addStock(@RequestBody StockDto payload) {
+    public ResponseEntity<BaseResponseModel> addStock(@Valid @RequestBody StockDto payload) {
         return stockService.createStock(payload);
     }
 
@@ -36,7 +37,7 @@ public class StockController {
 //    }
 
     @PatchMapping("/{stockId}")
-    public ResponseEntity<BaseResponseModel> adjustQuantity(@PathVariable("stockId") Long stockId, @RequestBody
+    public ResponseEntity<BaseResponseModel> adjustQuantity(@PathVariable("stockId") Long stockId, @Valid @RequestBody
     UpdateStockDto payload) {
         return stockService.adjustQuantity(stockId, payload);
     }
