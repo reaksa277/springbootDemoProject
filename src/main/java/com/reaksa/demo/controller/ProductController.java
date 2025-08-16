@@ -3,8 +3,11 @@ package com.reaksa.demo.controller;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.Product.ProductDto;
+import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +29,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponseModel> createProduct(@RequestBody ProductDto payload) {
+    public ResponseEntity<BaseResponseModel> createProduct(@Valid @RequestBody ProductDto payload) {
         return productService.createProduct(payload);
     }
 
@@ -48,6 +51,13 @@ public class ProductController {
 
     ) {
         return productService.searchProduct(name, minPrice, maxPrice);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<BaseResponseModel>
+     handleResourceNotFoundException(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new BaseResponseModel("fail", ex.getMessage()));
     }
 
 }
