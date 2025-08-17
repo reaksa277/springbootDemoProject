@@ -4,6 +4,7 @@ import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.User.UserDto;
 import com.reaksa.demo.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class UserController {
     // used for create/inserting record
     // request body can be called request
     @PostMapping
-    public ResponseEntity<BaseResponseModel> addUser(@RequestBody UserDto payload) {
+    public ResponseEntity<BaseResponseModel> addUser(@Valid @RequestBody UserDto payload) {
         return userService.addUser(payload);
     }
 
