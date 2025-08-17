@@ -5,6 +5,7 @@ import com.reaksa.demo.dto.Supplier.UpdateSupplierDto;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.service.SupplierService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +23,12 @@ public class SupplierController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponseModel> createSupplier(@RequestBody SupplierDto payload) {
+    public ResponseEntity<BaseResponseModel> createSupplier(@Valid @RequestBody SupplierDto payload) {
         return supplierService.createSupplier(payload);
     }
 
     @PutMapping("/{supplier_id}")
-    public ResponseEntity<BaseResponseModel> updateSupplier(@PathVariable("supplier_id") Long supplierId, @RequestBody UpdateSupplierDto payload) {
+    public ResponseEntity<BaseResponseModel> updateSupplier(@PathVariable("supplier_id") Long supplierId, @Valid @RequestBody UpdateSupplierDto payload) {
         return supplierService.updateSupplier(supplierId, payload);
     }
 
