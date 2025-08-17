@@ -1,5 +1,6 @@
 package com.reaksa.demo.controller;
 
+import com.reaksa.demo.dto.User.UpdateUserDto;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.User.UserDto;
@@ -38,7 +39,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<BaseResponseModel> updateUser(@PathVariable("userId") Long userId ,@RequestBody UserDto payload) {
+    public ResponseEntity<BaseResponseModel> updateUser(@PathVariable("userId") Long userId ,@Valid @RequestBody UpdateUserDto payload) {
         return userService.updateUser(userId, payload);
     }
 

@@ -1,5 +1,6 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.dto.User.UpdateUserDto;
 import com.reaksa.demo.dto.User.UserResponseDto;
 import com.reaksa.demo.entity.User;
 import com.reaksa.demo.exception.model.DuplicateResourceException;
@@ -62,7 +63,7 @@ public class UserService {
                 .body(new BaseResponseModel("success", "Successfully created user"));
     }
 
-    public ResponseEntity<BaseResponseModel> updateUser(Long userId, UserDto payload) {
+    public ResponseEntity<BaseResponseModel> updateUser(Long userId, UpdateUserDto payload) {
 
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
