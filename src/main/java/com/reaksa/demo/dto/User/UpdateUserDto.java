@@ -1,5 +1,7 @@
 package com.reaksa.demo.dto.User;
 
+import com.reaksa.demo.common.annotations.ValidEnum;
+import com.reaksa.demo.common.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -19,5 +21,8 @@ public class UpdateUserDto {
     @NotNull(message = "address is required")
     @Size(min = 5, max = 50, message = "address must be between 5 and 50 characters")
     private String address;
-    private String role =  "USER";
+
+    @NotNull(message = "role is required")
+    @ValidEnum(enumClass = Role.class, message = "Role must be in [USER, ADMIN]")
+    private String role;
 }

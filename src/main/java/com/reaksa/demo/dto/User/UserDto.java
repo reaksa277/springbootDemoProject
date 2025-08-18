@@ -1,6 +1,8 @@
 package com.reaksa.demo.dto.User;
 
 
+import com.reaksa.demo.common.annotations.ValidEnum;
+import com.reaksa.demo.common.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +34,8 @@ public class UserDto {
     @NotNull(message = "email is required")
     @Email(message = "email must be valid")
     private String email;
+
+    @ValidEnum(enumClass = Role.class, message = "Role must be in [USER, ADMIN]")
     private String role =  "USER";
 
 }
