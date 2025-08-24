@@ -1,5 +1,6 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.dto.User.ChangePasswordUserDto;
 import com.reaksa.demo.dto.User.UpdateUserDto;
 import com.reaksa.demo.dto.User.UserResponseDto;
 import com.reaksa.demo.entity.User;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -88,5 +90,26 @@ public class UserService {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .body(new BaseResponseModel("success", "Successfully deleted user"));
+    }
+
+    public ResponseEntity<BaseResponseModel> changePassword(ChangePasswordUserDto payload, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        if (!Objects.equals(user.getPassword(), payload.getOldPassword())) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body(new BaseResponseModel("fail", "old password doesn't match, please try again"));
+        }
+
+        if (!Objects.equals(payload.getNewPassword(), payload.getConfirmNewPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new BaseResponseModel("fail", "new password and confirm password doesn't match, please try again"));
+        }
+
+        mapper.updateEntityChangePassword(user, payload.getNewPassword());
+        userRepository.save(user);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseModel("success", "Successfully changed password"));
     }
 }

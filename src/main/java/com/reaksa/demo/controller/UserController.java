@@ -1,5 +1,6 @@
 package com.reaksa.demo.controller;
 
+import com.reaksa.demo.dto.User.ChangePasswordUserDto;
 import com.reaksa.demo.dto.User.UpdateUserDto;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
@@ -46,6 +47,13 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public ResponseEntity<BaseResponseModel> deleteUser(@PathVariable Long userId) {
         return userService.deleteUser(userId);
+    }
+
+    // change password
+    @PatchMapping("/{user_id}/change-password")
+    public ResponseEntity<BaseResponseModel> changePassword(@PathVariable("user_id") Long userId, @RequestBody ChangePasswordUserDto payload) {
+
+        return userService.changePassword(payload, userId);
     }
 
 }
