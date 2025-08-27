@@ -20,13 +20,13 @@ public class LoggingAspect {
 
     @Around("execution(* com.reaksa.demo.service..*(..))")
     public Object logServiceMethods(ProceedingJoinPoint joinPoint) throws Throwable {
-        Logger log = (Logger) LoggerFactory.getLogger(joinPoint.getTarget().getClass());
+        Logger log = LoggerFactory.getLogger(joinPoint.getTarget().getClass());
         String methodName = joinPoint.getSignature().getName();
         String className = joinPoint.getTarget().getClass().getSimpleName();
         long startTime = System.currentTimeMillis();
         String requestId = UUID.randomUUID().toString();
 
-        log.info(LOG_FORMAT.formatted("Request", className, methodName,startTime));
+        log.info(formatter.logRequest(requestId, className, methodName,startTime));
 
         try {
             // execute the original method logic
@@ -34,14 +34,59 @@ public class LoggingAspect {
 
             long endTime = System.currentTimeMillis();
             // logging
-            log.info(LOG_FORMAT.formatted("Response", className, methodName, startTime, endTime));
+            log.info(formatter.logResponse(requestId, className, methodName, startTime, endTime));
 
             return result;
         } catch (Exception e) {
             long endTime = System.currentTimeMillis();
 
-            log.info(LOG_FORMAT.formatted("Error", className, methodName, startTime, endTime));
+            log.info(formatter.logError(requestId, className, methodName, startTime, endTime));
 
+            throw e;
+        }
+    }
+
+    @Around("execution(* com.reaksa.demo.controller..*(..))")
+    public Object logControllerMethods(ProceedingJoinPoint joinPoint) throws Throwable {
+        Logger log = LoggerFactory.getLogger(joinPoint.getTarget().getClass());
+        String methodName = joinPoint.getSignature().getName();
+        String className = joinPoint.getTarget().getClass().getSimpleName();
+        long startTime = System.currentTimeMillis();
+        String requestId = UUID.randomUUID().toString();
+
+        log.info(formatter.logRequest(requestId, className, methodName,startTime));
+
+        try {
+            Object result = joinPoint.proceed();
+            long endTime = System.currentTimeMillis();
+            log.info(formatter.logResponse(requestId, className, methodName, startTime, endTime));
+            return result;
+        } catch (Exception e) {
+            long endTime = System.currentTimeMillis();
+            log.info(formatter.logError(requestId, className, methodName, startTime, endTime));
+            throw e;
+        }
+    }
+
+    @Around("execution(* com.reaksa.demo.repository..*(..))")
+    public Object logRepositoryMethods(ProceedingJoinPoint joinPoint) throws Throwable {
+        Logger log = LoggerFactory.getLogger(joinPoint.getTarget().getClass());
+        String methodName = joinPoint.getSignature().getName();
+        String className = joinPoint.getTarget().getClass().getSimpleName();
+        long startTime = System.currentTimeMillis();
+        String requestId = UUID.randomUUID().toString();
+
+        log.info(formatter.logRequest(requestId, className, methodName, startTime));
+
+        try {
+            Object result = joinPoint.proceed();
+            long endTime = System.currentTimeMillis();
+
+            log.info(formatter.logResponse(requestId, className, methodName, startTime, endTime));
+            return result;
+        } catch (Exception e ) {
+            long endTime = System.currentTimeMillis();
+            log.info(formatter.logError(requestId, className, methodName, startTime, endTime));
             throw e;
         }
     }

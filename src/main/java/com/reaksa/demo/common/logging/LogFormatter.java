@@ -4,9 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LogFormatter {
-    private static final String LOG_FORMAT = "%s:%s | target=%s | method=%s," +
-            "startTime=%s,endTime=%s," +
-            "executionTime=%sms";
+    private static final String LOG_FORMAT = "%s:%s | target=%s, method=%s, startTime=%s, endTime=%s, executionTime=%dms";
 
     public String logRequest(String requestId, String target, String method, Long startTime) {
         return String.format(LOG_FORMAT,
@@ -14,7 +12,9 @@ public class LogFormatter {
                 requestId,
                 target,
                 method,
-                startTime
+                startTime,
+                0,
+                0
                 );
     }
 
@@ -24,6 +24,8 @@ public class LogFormatter {
                 requestId,
                 target,
                 method,
+                startTime,
+                endTime,
                 endTime - startTime
                 );
     }
@@ -34,6 +36,8 @@ public class LogFormatter {
                 requestId,
                 target,
                 method,
+                startTime,
+                endTime,
                 endTime - startTime
                 );
     }
