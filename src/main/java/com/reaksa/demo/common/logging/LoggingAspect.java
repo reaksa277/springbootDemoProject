@@ -22,11 +22,11 @@ public class LoggingAspect {
     public Object logServiceMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         Logger log = LoggerFactory.getLogger(joinPoint.getTarget().getClass());
         String methodName = joinPoint.getSignature().getName();
-        String className = joinPoint.getTarget().getClass().getSimpleName();
+        String target = joinPoint.getTarget().getClass().getSimpleName();
         long startTime = System.currentTimeMillis();
         String requestId = UUID.randomUUID().toString();
 
-        log.info(formatter.logRequest(requestId, className, methodName,startTime));
+        log.info(formatter.logRequest(requestId, target, methodName,startTime));
 
         try {
             // execute the original method logic
@@ -34,13 +34,13 @@ public class LoggingAspect {
 
             long endTime = System.currentTimeMillis();
             // logging
-            log.info(formatter.logResponse(requestId, className, methodName, startTime, endTime));
+            log.info(formatter.logResponse(requestId, target, methodName, startTime, endTime));
 
             return result;
         } catch (Exception e) {
             long endTime = System.currentTimeMillis();
 
-            log.info(formatter.logError(requestId, className, methodName, startTime, endTime));
+            log.info(formatter.logError(requestId, target, methodName, startTime, endTime));
 
             throw e;
         }
@@ -50,20 +50,20 @@ public class LoggingAspect {
     public Object logControllerMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         Logger log = LoggerFactory.getLogger(joinPoint.getTarget().getClass());
         String methodName = joinPoint.getSignature().getName();
-        String className = joinPoint.getTarget().getClass().getSimpleName();
+        String target = joinPoint.getTarget().getClass().getSimpleName();
         long startTime = System.currentTimeMillis();
         String requestId = UUID.randomUUID().toString();
 
-        log.info(formatter.logRequest(requestId, className, methodName,startTime));
+        log.info(formatter.logRequest(requestId, target, methodName,startTime));
 
         try {
             Object result = joinPoint.proceed();
             long endTime = System.currentTimeMillis();
-            log.info(formatter.logResponse(requestId, className, methodName, startTime, endTime));
+            log.info(formatter.logResponse(requestId, target, methodName, startTime, endTime));
             return result;
         } catch (Exception e) {
             long endTime = System.currentTimeMillis();
-            log.info(formatter.logError(requestId, className, methodName, startTime, endTime));
+            log.info(formatter.logError(requestId, target, methodName, startTime, endTime));
             throw e;
         }
     }
@@ -72,21 +72,21 @@ public class LoggingAspect {
     public Object logRepositoryMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         Logger log = LoggerFactory.getLogger(joinPoint.getTarget().getClass());
         String methodName = joinPoint.getSignature().getName();
-        String className = joinPoint.getTarget().getClass().getSimpleName();
+        String target = joinPoint.getTarget().getClass().getSimpleName();
         long startTime = System.currentTimeMillis();
         String requestId = UUID.randomUUID().toString();
 
-        log.info(formatter.logRequest(requestId, className, methodName, startTime));
+        log.info(formatter.logRequest(requestId, target, methodName, startTime));
 
         try {
             Object result = joinPoint.proceed();
             long endTime = System.currentTimeMillis();
 
-            log.info(formatter.logResponse(requestId, className, methodName, startTime, endTime));
+            log.info(formatter.logResponse(requestId, target, methodName, startTime, endTime));
             return result;
         } catch (Exception e ) {
             long endTime = System.currentTimeMillis();
-            log.info(formatter.logError(requestId, className, methodName, startTime, endTime));
+            log.info(formatter.logError(requestId, target, methodName, startTime, endTime));
             throw e;
         }
     }
