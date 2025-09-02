@@ -11,21 +11,28 @@ import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.User.UserDto;
 import com.reaksa.demo.repository.UserRepository;
+import com.reaksa.demo.service.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private UserMapper mapper;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public ResponseEntity<BaseResponseWithDataModel> listUser() {
         List<User> userData = userRepository.findAll();
@@ -40,6 +47,10 @@ public class UserService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        String token = jwtUtil.generateToken(user);
+        System.out.println("Token: " + token);
+
         UserResponseDto dto = mapper.toDto(user);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -111,5 +122,13 @@ public class UserService {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseModel("success", "Successfully changed password"));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByName(username)
+                .orElseThrow(() -> {
+                    throw new UsernameNotFoundException("user not found with username: " + username);
+                });
     }
 }
