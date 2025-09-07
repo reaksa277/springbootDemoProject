@@ -1,15 +1,21 @@
 package com.reaksa.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+
 @Entity
 @Table(name = "products") // table name in db
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString(exclude = {"stocks"})
+@EqualsAndHashCode(exclude = {"stocks"})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
