@@ -6,6 +6,7 @@ import com.reaksa.demo.dto.Order.UpdateOrderDto;
 import com.reaksa.demo.entity.Order;
 import com.reaksa.demo.entity.Stock;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
+import com.reaksa.demo.exception.model.UnprocessableEntityException;
 import com.reaksa.demo.mapper.OrderMapper;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
@@ -84,7 +85,7 @@ public class OrderService {
             }
 
             if(remain > 0) {
-                throw new RuntimeException("Not enough stocks for this product id: " + productId);
+                throw new UnprocessableEntityException("Not enough stocks for this product id: " + productId);
             }
         }
 
