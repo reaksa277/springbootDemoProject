@@ -6,6 +6,7 @@ import com.reaksa.demo.entity.Order;
 import com.reaksa.demo.entity.Stock;
 import com.reaksa.demo.mapper.OrderMapper;
 import com.reaksa.demo.model.BaseResponseModel;
+import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.repository.OrderRepository;
 import com.reaksa.demo.repository.StockRepository;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,13 @@ public class OrderService {
 
     @Autowired
     private StockRepository stockRepository;
+
+    public ResponseEntity<BaseResponseWithDataModel> listOrders() {
+        List<Order> orders = orderRepository.findAll();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseWithDataModel("success", "successfully retrieved orders", mapper.toResponseDtoList(orders)));
+    }
 
     @Transactional
     public ResponseEntity<BaseResponseModel> createOrder(OrderDto payload) {
