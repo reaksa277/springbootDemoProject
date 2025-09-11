@@ -3,6 +3,7 @@ package com.reaksa.demo.mapper;
 import com.reaksa.demo.dto.Order.OrderDto;
 import com.reaksa.demo.dto.Order.OrderItemResponseDto;
 import com.reaksa.demo.dto.Order.OrderResponseDto;
+import com.reaksa.demo.dto.Order.UpdateOrderDto;
 import com.reaksa.demo.entity.Order;
 import com.reaksa.demo.entity.OrderItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,13 @@ public class OrderMapper {
         return entities.stream()
                 .map(order -> this.toResponseDto(order))
                 .toList();
+    }
+
+    public void updateEntityFromDto(Order entity, UpdateOrderDto dto) {
+        if (entity == null || dto == null) {
+            return;
+        }
+        entity.setStatus(dto.getStatus());
     }
 
 }

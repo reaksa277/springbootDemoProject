@@ -2,8 +2,10 @@ package com.reaksa.demo.service;
 
 import com.reaksa.demo.dto.Order.OrderDto;
 import com.reaksa.demo.dto.Order.OrderItemDto;
+import com.reaksa.demo.dto.Order.UpdateOrderDto;
 import com.reaksa.demo.entity.Order;
 import com.reaksa.demo.entity.Stock;
+import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.mapper.OrderMapper;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
@@ -95,5 +97,29 @@ public class OrderService {
         orderRepository.save(order);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(new BaseResponseModel("success", "successfully placed order"));
+    }
+
+    public ResponseEntity<BaseResponseModel> updateOrderStatus(Long orderId, UpdateOrderDto payload) {
+        Order existingOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> {
+                    throw new ResourceNotFoundException("Order not found with id: " + orderId);
+                });
+
+        mapper.updateEntityFromDto(existingOrder, payload);
+        orderRepository.save(existingOrder);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseModel("success", "successfully updated order" + payload.getStatus()));
+    }
+
+    public ResponseEntity<BaseResponseModel> deleteOrder(Long orderId) {
+        if (!orderRepository.existsById(orderId)) {
+            throw new ResourceNotFoundException("Order not found with id: " + orderId);
+        }
+
+        orderRepository.deleteById(orderId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseModel("success", "successfully deleted order with id: " + orderId));
     }
 }
