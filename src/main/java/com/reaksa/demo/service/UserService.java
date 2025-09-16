@@ -6,6 +6,7 @@ import com.reaksa.demo.dto.User.UserResponseDto;
 import com.reaksa.demo.entity.User;
 import com.reaksa.demo.exception.model.DuplicateResourceException;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
+import com.reaksa.demo.exception.model.UnprocessableEntityException;
 import com.reaksa.demo.mapper.UserMapper;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
@@ -34,94 +35,55 @@ public class UserService implements UserDetailsService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public ResponseEntity<BaseResponseWithDataModel> listUser() {
-        List<User> userData = userRepository.findAll();
+    public List<UserResponseDto> listUser() {
+        List<User> users = userRepository.findAll();
 
-        List<UserResponseDto> dtos = mapper.toDtoList(userData);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully retrieved  users", dtos));
+        return mapper.toDtoList(users);
     }
 
-    public ResponseEntity<BaseResponseWithDataModel> getUser(Long userId) {
+    public UserResponseDto getUser(Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        String token = jwtUtil.generateToken(user);
-        System.out.println("Token: " + token);
-
-        UserResponseDto dto = mapper.toDto(user);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully retrieve user", dto));
+        return mapper.toDto(user);
     }
 
-    public ResponseEntity<BaseResponseModel> addUser( UserDto payload) {
 
-        // validate if username is existed
-        if(userRepository.existsByName(payload.getName())) {
-            throw new DuplicateResourceException("username already exists");
-        }
-        if(userRepository.existsByEmail(payload.getEmail())) {
-            throw new DuplicateResourceException("email already exists");
-        }
-
-        User user = mapper.toEntity(payload);
-        userRepository.save(user);
-
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new BaseResponseModel("success", "Successfully created user"));
-    }
-
-    public ResponseEntity<BaseResponseModel> updateUser(Long userId, UpdateUserDto payload) {
+    public void updateUser(Long userId, UpdateUserDto payload) {
 
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         mapper.updateEntityFromDto(existingUser, payload);
 
         userRepository.save(existingUser);
-
-        return ResponseEntity
-                .status(HttpStatus.OK).
-                body(new BaseResponseModel("success", "Successfully updated user"));
     }
 
-    public ResponseEntity<BaseResponseModel> deleteUser(Long userId) {
+    public void deleteUser(Long userId) {
 
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found with id: " + userId);
         }
 
         userRepository.deleteById(userId);
-
-        // 204 No Content
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .body(new BaseResponseModel("success", "Successfully deleted user"));
     }
 
-    public ResponseEntity<BaseResponseModel> changePassword(ChangePasswordUserDto payload, Long userId) {
+    public void changePassword(ChangePasswordUserDto payload, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
+        // old password is incorrect
         if (!Objects.equals(user.getPassword(), payload.getOldPassword())) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .body(new BaseResponseModel("fail", "old password doesn't match, please try again"));
+            throw new UnprocessableEntityException("old password not match");
         }
 
+        // new password and confirm password not match
         if (!Objects.equals(payload.getNewPassword(), payload.getConfirmNewPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new BaseResponseModel("fail", "new password and confirm password doesn't match, please try again"));
+            throw new UnprocessableEntityException("new password and confirm password must be the same");
         }
 
         mapper.updateEntityChangePassword(user, payload.getNewPassword());
         userRepository.save(user);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseModel("success", "Successfully changed password"));
     }
 
     @Override

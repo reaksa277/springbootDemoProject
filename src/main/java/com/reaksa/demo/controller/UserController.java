@@ -2,14 +2,19 @@ package com.reaksa.demo.controller;
 
 import com.reaksa.demo.dto.User.ChangePasswordUserDto;
 import com.reaksa.demo.dto.User.UpdateUserDto;
+import com.reaksa.demo.dto.User.UserResponseDto;
+import com.reaksa.demo.dto.base.Response;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.User.UserDto;
 import com.reaksa.demo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -23,37 +28,45 @@ public class UserController {
 
     // used to retrieve user list
     @GetMapping
-    public ResponseEntity<BaseResponseWithDataModel> listUsers() {
-        return userService.listUser();
+    public ResponseEntity<Response> listUsers() {
+        List<UserResponseDto> users = userService.listUser();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.success("200", "success", "successfully retrieved users", users));
     }
 
     @GetMapping("/{user_id}")
-    public ResponseEntity<BaseResponseWithDataModel> getUser(@PathVariable Long user_id) {
-        return userService.getUser(user_id);
+    public ResponseEntity<Response> getUser(@PathVariable Long user_id) {
+        UserResponseDto user = userService.getUser(user_id);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.success("200", "success", "successfully retrieved user", user));
     }
 
-    // used for create/inserting record
-    // request body can be called request
-    @PostMapping
-    public ResponseEntity<BaseResponseModel> addUser(@Valid @RequestBody UserDto payload) {
-        return userService.addUser(payload);
-    }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<BaseResponseModel> updateUser(@PathVariable("userId") Long userId ,@Valid @RequestBody UpdateUserDto payload) {
-        return userService.updateUser(userId, payload);
+    public ResponseEntity<Response> updateUser(@PathVariable("userId") Long userId ,@Valid @RequestBody UpdateUserDto payload) {
+        userService.updateUser(userId, payload);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.success("success", "successfully updated user!"));
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<BaseResponseModel> deleteUser(@PathVariable Long userId) {
-        return userService.deleteUser(userId);
+    public ResponseEntity<Response> deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.success("success", "successfully deleted user!"));
     }
 
     // change password
     @PatchMapping("/{user_id}/change-password")
-    public ResponseEntity<BaseResponseModel> changePassword(@PathVariable("user_id") Long userId, @RequestBody ChangePasswordUserDto payload) {
+    public ResponseEntity<Response> changePassword(@PathVariable("user_id") Long userId, @RequestBody ChangePasswordUserDto payload) {
+        userService.changePassword(payload, userId);
 
-        return userService.changePassword(payload, userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.success("success", "successfully changed password!"));
     }
 
 }
