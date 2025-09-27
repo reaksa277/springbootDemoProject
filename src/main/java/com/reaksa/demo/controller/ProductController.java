@@ -1,6 +1,7 @@
 package com.reaksa.demo.controller;
 
 import com.reaksa.demo.dto.Product.ProductResponseDto;
+import com.reaksa.demo.dto.base.Response;
 import com.reaksa.demo.exception.model.DuplicateResourceException;
 import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.model.BaseResponseWithDataModel;
@@ -26,47 +27,47 @@ public class ProductController {
 
 
     @GetMapping
-    public ResponseEntity<BaseResponseWithDataModel> listProduct() {
+    public ResponseEntity<Response> listProduct() {
         List<ProductResponseDto> products = productService.listProducts();
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully list products", products));
+                .body(Response.success("200", "success", "successfully listed products", products));
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<BaseResponseWithDataModel> getProduct(@PathVariable("productId") long productId) {
+    public ResponseEntity<Response> getProduct(@PathVariable("productId") long productId) {
         ProductResponseDto product = productService.getProduct(productId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully retrieve product", product));
+                .body(Response.success("200", "success", "successfully retrieved product", product));
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponseModel> createProduct(@Valid @RequestBody ProductDto payload) {
+    public ResponseEntity<Response> createProduct(@Valid @RequestBody ProductDto payload) {
         productService.createProduct(payload);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponseModel("success","successfully created product"));
+                .body(Response.success("201", "success","successfully created product"));
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<BaseResponseModel> updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductDto payload) {
+    public ResponseEntity<Response> updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductDto payload) {
         productService.updateProduct(productId, payload);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseModel("success","successfully updated product"));
+                .body(Response.success("200", "success","successfully updated product"));
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<BaseResponseModel> deleteProduct(@PathVariable("productId") Long productId) {
+    public ResponseEntity<Response> deleteProduct(@PathVariable("productId") Long productId) {
         productService.deleteProduct(productId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseModel("success","successfully deleted product"));
+                .body(Response.success("200" ,"success","successfully deleted product id: "+productId));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<BaseResponseWithDataModel> searchProductsByFilter(
+    public ResponseEntity<Response> searchProductsByFilter(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "minPrice", required = false) Double minPrice,
             @RequestParam(value = "maxPrice", required = false) Double maxPrice
@@ -75,7 +76,7 @@ public class ProductController {
         List<ProductResponseDto> products = productService.searchProduct(name, minPrice, maxPrice);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseWithDataModel("success", "successfully search products", products));
+                .body(Response.success("200", "success", "successfully retrieved products with filters", products));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
