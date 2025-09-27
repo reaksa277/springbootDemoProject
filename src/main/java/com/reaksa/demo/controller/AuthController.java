@@ -1,6 +1,8 @@
 package com.reaksa.demo.controller;
 
 import com.reaksa.demo.dto.User.UserDto;
+import com.reaksa.demo.dto.auth.AuthDto;
+import com.reaksa.demo.dto.auth.AuthResponseDto;
 import com.reaksa.demo.dto.base.Response;
 import com.reaksa.demo.service.security.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +19,20 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<Response> register(@RequestBody UserDto payload) {
-        String token = authService.register(payload);
+        AuthResponseDto dto = authService.register(payload);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(Response.success("201", "success", token));
+                .body(Response.success("201", "success","successfully registered user",  dto));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Response> login(@RequestBody AuthDto payload) {
+        AuthResponseDto dto = authService.login(payload);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.success("200", "success","successfully login",dto));
     }
 }
