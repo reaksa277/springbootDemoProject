@@ -4,25 +4,18 @@ import com.reaksa.demo.dto.User.ChangePasswordUserDto;
 import com.reaksa.demo.dto.User.UpdateUserDto;
 import com.reaksa.demo.dto.User.UserResponseDto;
 import com.reaksa.demo.entity.User;
-import com.reaksa.demo.exception.model.DuplicateResourceException;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.exception.model.UnprocessableEntityException;
 import com.reaksa.demo.mapper.UserMapper;
-import com.reaksa.demo.model.BaseResponseModel;
-import com.reaksa.demo.model.BaseResponseWithDataModel;
-import com.reaksa.demo.dto.User.UserDto;
 import com.reaksa.demo.repository.UserRepository;
 import com.reaksa.demo.service.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
