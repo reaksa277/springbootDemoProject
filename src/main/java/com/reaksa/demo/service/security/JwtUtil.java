@@ -26,11 +26,13 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", "112233Id");
 
         return this.createToken(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
+        System.out.println("Key: " +  this.getSigningKey());
 
         return Jwts.builder()
                 .setClaims(claims)

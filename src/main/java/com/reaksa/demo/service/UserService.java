@@ -39,6 +39,9 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
+        String token = jwtUtil.generateToken(user);
+        System.out.println("token: " + token);
+
         return mapper.toDto(user);
     }
 
