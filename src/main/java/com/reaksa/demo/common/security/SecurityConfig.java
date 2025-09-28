@@ -1,5 +1,6 @@
 package com.reaksa.demo.common.security;
 
+import com.reaksa.demo.common.filter.JwtAuthenticationFilter;
 import com.reaksa.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,12 +14,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -45,10 +50,12 @@ public class SecurityConfig {
                         authz
 //                                .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
                                 .requestMatchers("/api/**").permitAll()
-                                .requestMatchers("/api/v1/auth/**").permitAll()
+//                                .requestMatchers("/api/v1/auth/**").permitAll()
                                 .anyRequest()
                                 .authenticated()
-                );
+                )
+                .authenticationManager(this.authenticationManager(http))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
