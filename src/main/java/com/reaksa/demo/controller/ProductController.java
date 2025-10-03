@@ -1,16 +1,18 @@
 package com.reaksa.demo.controller;
 
 import com.reaksa.demo.dto.Product.ProductResponseDto;
+import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.dto.base.Response;
-import com.reaksa.demo.exception.model.DuplicateResourceException;
 import com.reaksa.demo.model.BaseResponseModel;
-import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.Product.ProductDto;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.repository.ProductRepository;
 import com.reaksa.demo.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,13 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @GetMapping("/paginated")
+    public ResponseEntity<Response> listProductWithPagination(@PageableDefault(size = 10, page = 0) Pageable pageable) {
+        PaginatedResponse<ProductResponseDto> products = productService.listProductWithPagination(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.success("200", "success", "successfully retrieved products with pagination", products));
+    }
 
     @GetMapping
     public ResponseEntity<Response> listProduct() {

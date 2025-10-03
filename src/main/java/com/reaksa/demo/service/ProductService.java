@@ -1,21 +1,18 @@
 package com.reaksa.demo.service;
 
 import com.reaksa.demo.dto.Product.ProductResponseDto;
-import com.reaksa.demo.dto.base.Response;
+import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.entity.Product;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.mapper.ProductMapper;
-import com.reaksa.demo.model.BaseResponseModel;
-import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.Product.ProductDto;
 import com.reaksa.demo.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -24,6 +21,13 @@ public class ProductService {
 
     @Autowired
     private ProductMapper mapper;
+
+    public PaginatedResponse listProductWithPagination(Pageable pageable) {
+        Page<Product> productPage = productRepository.findAll(pageable);
+        Page<ProductResponseDto> productPageDto = productPage.map(product -> mapper.toDto(product));
+
+        return  PaginatedResponse.from(productPageDto);
+    }
 
     public List<ProductResponseDto> listProducts() {
         List<Product> products = productRepository.findAll();
