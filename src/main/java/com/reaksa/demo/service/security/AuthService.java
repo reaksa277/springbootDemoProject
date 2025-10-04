@@ -35,6 +35,9 @@ public class AuthService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RefreshTokenService  refreshTokenService;
+
     public AuthResponseDto register(UserDto payload) {
         // validate if username is existed
         if(userRepository.existsByName((payload.getName()))) {
