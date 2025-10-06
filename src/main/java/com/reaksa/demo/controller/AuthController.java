@@ -3,8 +3,11 @@ package com.reaksa.demo.controller;
 import com.reaksa.demo.dto.User.UserDto;
 import com.reaksa.demo.dto.auth.AuthDto;
 import com.reaksa.demo.dto.auth.AuthResponseDto;
+import com.reaksa.demo.dto.auth.RefreshTokenDto;
+import com.reaksa.demo.dto.auth.RefreshTokenResponseDto;
 import com.reaksa.demo.dto.base.Response;
 import com.reaksa.demo.service.security.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +37,13 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.success("200", "success","successfully login",dto));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Response> refresh(@Valid @RequestBody RefreshTokenDto payload) {
+        RefreshTokenResponseDto dto = authService.refreshToken(payload);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.success("200", "success", "successfully refreshed token", dto));
     }
 }

@@ -3,6 +3,9 @@ package com.reaksa.demo.service.security;
 import com.reaksa.demo.dto.User.UserDto;
 import com.reaksa.demo.dto.auth.AuthDto;
 import com.reaksa.demo.dto.auth.AuthResponseDto;
+import com.reaksa.demo.dto.auth.RefreshTokenDto;
+import com.reaksa.demo.dto.auth.RefreshTokenResponseDto;
+import com.reaksa.demo.entity.RefreshToken;
 import com.reaksa.demo.entity.User;
 import com.reaksa.demo.exception.model.DuplicateResourceException;
 import com.reaksa.demo.mapper.UserMapper;
@@ -14,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.naming.AuthenticationException;
 
 @Service
 public class AuthService {
@@ -66,5 +71,28 @@ public class AuthService {
         String accessToken = jwtUtil.generateToken(userDetails);
 
         return new AuthResponseDto(accessToken, null);
+    }
+
+    public RefreshTokenResponseDto refreshToken(RefreshTokenDto payload) {
+        String token = payload.getRefreshToken();
+
+        // find the token
+        RefreshToken refreshToken = refreshTokenService.findByToken(token);
+        try {
+            refreshToken =  refreshTokenService.verifyToken(refreshToken);
+        } catch (AuthenticationException e) {
+            return null;
+        }
+
+        // get user from refresh token
+        User user = refreshToken.getUser();
+
+        // generate new access token
+        String newAccessToken = jwtUtil.generateToken(user);
+
+        // rotate refresh token
+        RefreshToken newRefreshToken = refreshTokenService.rotateRefreshToken(refreshToken);
+
+        return new RefreshTokenResponseDto(newAccessToken, newRefreshToken.getToken(), "Bearer");
     }
 }
