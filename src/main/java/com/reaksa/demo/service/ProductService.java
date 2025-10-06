@@ -1,5 +1,6 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.common.config.ApplicationConfiguration;
 import com.reaksa.demo.dto.Product.ProductResponseDto;
 import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.entity.Product;
@@ -22,11 +23,14 @@ public class ProductService {
     @Autowired
     private ProductMapper mapper;
 
+    @Autowired
+    private ApplicationConfiguration appConfig;
+
     public PaginatedResponse listProductWithPagination(Pageable pageable) {
         Page<Product> productPage = productRepository.findAll(pageable);
         Page<ProductResponseDto> productPageDto = productPage.map(product -> mapper.toDto(product));
 
-        return  PaginatedResponse.from(productPageDto);
+        return PaginatedResponse.from(productPageDto, appConfig.getPagination().getUrlByResourse("product"));
     }
 
     public List<ProductResponseDto> listProducts() {

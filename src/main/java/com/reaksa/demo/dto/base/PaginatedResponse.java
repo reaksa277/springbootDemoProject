@@ -18,7 +18,7 @@ public class PaginatedResponse<T> {
     private List<T> content;
     private Object pagination;
 
-    public static <T> PaginatedResponse from(Page<T> page) {
+    public static <T> PaginatedResponse from(Page<T> page, String product) {
         return new PaginatedResponse(page.getContent(), page.getPageable());
     }
 }
