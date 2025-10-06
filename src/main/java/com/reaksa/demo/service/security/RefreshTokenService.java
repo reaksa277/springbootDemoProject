@@ -1,9 +1,11 @@
 package com.reaksa.demo.service.security;
 
+import com.reaksa.demo.common.config.ApplicationConfiguration;
 import com.reaksa.demo.entity.RefreshToken;
 import com.reaksa.demo.entity.User;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.repository.RefreshTokenRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,15 +21,21 @@ public class RefreshTokenService {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    @Value("${config.security.refresh-token-expiration}")
-    private Long expiration;
+    @Autowired
+    private ApplicationConfiguration appConfig;
+    private long expiration;
+
+    @PostConstruct
+    private void init() {
+        this.expiration = appConfig.getSecurity().getExpiration();
+    }
 
     public RefreshToken createRefreshToken(User user) {
         String refreshToken = UUID.randomUUID().toString();
 
         RefreshToken entity = new RefreshToken();
         entity.setToken(refreshToken);
-        entity.setExpiredAt(LocalDateTime.now().plusDays(this.expiration));
+        entity.setExpiredAt(LocalDateTime.now().plusDays(expiration));
         entity.setUser(user);
 
         return refreshTokenRepository.save(entity);
