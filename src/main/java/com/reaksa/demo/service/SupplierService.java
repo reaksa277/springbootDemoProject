@@ -1,18 +1,18 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.common.config.ApplicationConfiguration;
 import com.reaksa.demo.dto.Supplier.SupplierDto;
 import com.reaksa.demo.dto.Supplier.SupplierResponseDto;
 import com.reaksa.demo.dto.Supplier.UpdateSupplierDto;
+import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.entity.Supplier;
 import com.reaksa.demo.exception.model.DuplicateResourceException;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.mapper.SupplierMapper;
-import com.reaksa.demo.model.BaseResponseModel;
-import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.repository.SupplierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +24,16 @@ public class SupplierService {
 
     @Autowired
     private SupplierMapper mapper;
+
+    @Autowired
+    private ApplicationConfiguration appConfig;
+
+    public PaginatedResponse listSuppliersWithPagination(Pageable pageable) {
+        Page<Supplier> supplierPages = supplierRepository.findAll(pageable);
+        Page<SupplierResponseDto> supplierPagesDto = supplierPages.map(supplier -> mapper.toDto(supplier));
+
+        return PaginatedResponse.from(supplierPagesDto, appConfig.getPagination().getUrlByResourse("supplier"));
+    }
 
     public List<SupplierResponseDto> listSupplier() {
         List<Supplier> suppliers = supplierRepository.findAll();

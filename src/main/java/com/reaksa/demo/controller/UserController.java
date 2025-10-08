@@ -3,10 +3,14 @@ package com.reaksa.demo.controller;
 import com.reaksa.demo.dto.User.ChangePasswordUserDto;
 import com.reaksa.demo.dto.User.UpdateUserDto;
 import com.reaksa.demo.dto.User.UserResponseDto;
+import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.dto.base.Response;
 import com.reaksa.demo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +23,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    @GetMapping("/paginated")
+    public ResponseEntity<Response> listUserWithPagination(
+            @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.DESC)Pageable pageable
+            ) {
+        PaginatedResponse<UserResponseDto> users = userService.listUserWithPagination(pageable);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.success("200", "success", "successfully retrieved users with pagination.",  users));
     }
 
     // used to retrieve user list

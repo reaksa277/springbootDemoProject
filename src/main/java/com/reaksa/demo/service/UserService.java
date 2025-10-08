@@ -1,8 +1,10 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.common.config.ApplicationConfiguration;
 import com.reaksa.demo.dto.User.ChangePasswordUserDto;
 import com.reaksa.demo.dto.User.UpdateUserDto;
 import com.reaksa.demo.dto.User.UserResponseDto;
+import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.entity.User;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.exception.model.UnprocessableEntityException;
@@ -10,6 +12,8 @@ import com.reaksa.demo.mapper.UserMapper;
 import com.reaksa.demo.repository.UserRepository;
 import com.reaksa.demo.service.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,6 +31,16 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private ApplicationConfiguration appConfig;
+
+    public PaginatedResponse listUserWithPagination(Pageable pageable) {
+        Page<User> userPages = userRepository.findAll(pageable);
+        Page<UserResponseDto> userPagesDto = userPages.map(user -> mapper.toDto(user));
+
+        return PaginatedResponse.from(userPagesDto, appConfig.getPagination().getUrlByResourse("user"));
+    }
 
     public List<UserResponseDto> listUser() {
         List<User> users = userRepository.findAll();

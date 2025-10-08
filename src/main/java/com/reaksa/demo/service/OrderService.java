@@ -1,8 +1,10 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.common.config.ApplicationConfiguration;
 import com.reaksa.demo.dto.Order.OrderDto;
 import com.reaksa.demo.dto.Order.OrderResponseDto;
 import com.reaksa.demo.dto.Order.UpdateOrderDto;
+import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.entity.Order;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.mapper.OrderMapper;
@@ -10,6 +12,8 @@ import com.reaksa.demo.repository.OrderRepository;
 import com.reaksa.demo.repository.StockRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,10 +28,17 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    private StockRepository stockRepository;
+    private StockManagementService stockManagementService;
 
     @Autowired
-    private StockManagementService stockManagementService;
+    private ApplicationConfiguration appConfig;
+
+    public PaginatedResponse listOrdersWithPagination(Pageable pageable){
+        Page<Order> orderPages = orderRepository.findAll(pageable);
+        Page<OrderResponseDto> orderPageDto = orderPages.map(order -> mapper.toResponseDto(order));
+
+        return PaginatedResponse.from(orderPageDto, appConfig.getPagination().getUrlByResourse("order"));
+    }
 
     public List<OrderResponseDto> listOrders() {
         List<Order> orders = orderRepository.findAll();

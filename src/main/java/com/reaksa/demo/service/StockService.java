@@ -1,6 +1,8 @@
 package com.reaksa.demo.service;
 
+import com.reaksa.demo.common.config.ApplicationConfiguration;
 import com.reaksa.demo.dto.Stock.StockResponseDto;
+import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.entity.Product;
 import com.reaksa.demo.entity.Stock;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
@@ -13,6 +15,8 @@ import com.reaksa.demo.dto.Stock.UpdateStockDto;
 import com.reaksa.demo.repository.ProductRepository;
 import com.reaksa.demo.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,6 +35,16 @@ public class StockService {
 
     @Autowired
     private StockMapper mapper;
+
+    @Autowired
+    private ApplicationConfiguration appConfig;
+
+    public PaginatedResponse listStocksWithPagination(Pageable  pageable) {
+        Page<Stock> stockPages = stockRepository.findAll(pageable);
+        Page<StockResponseDto> stockPageDto = stockPages.map(stock -> mapper.toDto(stock));
+
+        return PaginatedResponse.from(stockPageDto, appConfig.getPagination().getUrlByResourse("stock"));
+    }
 
     public List<StockResponseDto> listStock() {
         List<Stock> stocks = stockRepository.findAll();
