@@ -10,8 +10,8 @@ import com.reaksa.demo.repository.ProductRepository;
 import com.reaksa.demo.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,9 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @GetMapping("/paginated")
-    public ResponseEntity<Response> listProductWithPagination(@PageableDefault(size = 10, page = 0) Pageable pageable) {
+    public ResponseEntity<Response> listProductWithPagination(
+            @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
         PaginatedResponse<ProductResponseDto> products = productService.listProductWithPagination(pageable);
 
         return ResponseEntity.status(HttpStatus.OK)
