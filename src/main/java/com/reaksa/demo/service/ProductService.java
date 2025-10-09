@@ -9,6 +9,9 @@ import com.reaksa.demo.mapper.ProductMapper;
 import com.reaksa.demo.dto.Product.ProductDto;
 import com.reaksa.demo.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,7 @@ public class ProductService {
         return PaginatedResponse.from(productPageDto, appConfig.getPagination().getUrlByResourse("product"));
     }
 
+    @Cacheable(value = "products", key = "'all'")
     public List<ProductResponseDto> listProducts() {
         List<Product> products = productRepository.findAll();
 
@@ -47,6 +51,7 @@ public class ProductService {
         return mapper.toDto(product);
     }
 
+    @CachePut(value = "products", key = "#product.getProductName()")
     public void createProduct(ProductDto product) {
         // validate if product is already exist
         if (productRepository.existsByProductName(product.getProductName())) {
@@ -58,6 +63,7 @@ public class ProductService {
         productRepository.save(productEntity);
     }
 
+    @CacheEvict(value = "products", key = "#productId")
     public void updateProduct(Long productId, ProductDto product) {
 
         Product existing = productRepository.findById(productId)
