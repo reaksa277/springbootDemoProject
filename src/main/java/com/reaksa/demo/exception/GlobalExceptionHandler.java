@@ -1,5 +1,6 @@
 package com.reaksa.demo.exception;
 
+import com.reaksa.demo.exception.model.CustomAuthenticationException;
 import com.reaksa.demo.exception.model.DuplicateResourceException;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.exception.model.UnprocessableEntityException;
@@ -33,6 +34,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnprocessableEntityException.class)
     public ResponseEntity<BaseResponseModel> handleUnprocessableEntityException(UnprocessableEntityException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new BaseResponseModel("fail", ex.getMessage()));
+    }
+
+    @ExceptionHandler(CustomAuthenticationException.class)
+    public ResponseEntity<BaseResponseModel> handleCustomAuthenticationException(CustomAuthenticationException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new BaseResponseModel("fail", ex.getMessage()));
     }
 

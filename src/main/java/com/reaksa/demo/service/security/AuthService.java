@@ -7,12 +7,14 @@ import com.reaksa.demo.dto.auth.RefreshTokenDto;
 import com.reaksa.demo.dto.auth.RefreshTokenResponseDto;
 import com.reaksa.demo.entity.RefreshToken;
 import com.reaksa.demo.entity.User;
+import com.reaksa.demo.exception.model.CustomAuthenticationException;
 import com.reaksa.demo.exception.model.DuplicateResourceException;
 import com.reaksa.demo.mapper.UserMapper;
 import com.reaksa.demo.repository.UserRepository;
 import com.reaksa.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,9 +65,14 @@ public class AuthService {
     }
 
     public AuthResponseDto login(AuthDto payload) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(payload.getUsername(), payload.getPassword())
-        );
+        try {
+            // login user
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(payload.getUsername(), payload.getPassword())
+            );
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Invalid username and password");
+        }
 
         UserDetails userDetails = userService.loadUserByUsername(payload.getUsername());
         String accessToken = jwtUtil.generateToken(userDetails);
@@ -81,7 +88,7 @@ public class AuthService {
         try {
             refreshToken =  refreshTokenService.verifyToken(refreshToken);
         } catch (AuthenticationException e) {
-            return null;
+            throw new CustomAuthenticationException("Invalid refresh token");
         }
 
         // get user from refresh token
