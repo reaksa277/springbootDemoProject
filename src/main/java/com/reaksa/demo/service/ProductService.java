@@ -29,7 +29,7 @@ public class ProductService {
     @Autowired
     private ApplicationConfiguration appConfig;
 
-    @Cacheable(value = "products-paginated", key = "T(String).valueOf(#pageable.getPageNumber()).concat('-').concat(T(String).valueOf(#pageable.getPageSize()))")
+    @Cacheable(value = "products-paginated", key = "T(com.reaksa.demo.common.util.CacheKeyGenerator).generatePaginatedKey('products', #pageable)")
     public PaginatedResponse listProductWithPagination(Pageable pageable) {
         Page<Product> productPage = productRepository.findAll(pageable);
         Page<ProductResponseDto> productPageDto = productPage.map(product -> mapper.toDto(product));
