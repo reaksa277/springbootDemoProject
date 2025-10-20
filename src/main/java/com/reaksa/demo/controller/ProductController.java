@@ -89,11 +89,4 @@ public class ProductController {
                 .body(Response.success("200", "success", "successfully retrieved products with filters", products));
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<BaseResponseModel>
-     handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new BaseResponseModel("fail", ex.getMessage()));
-    }
-
 }
