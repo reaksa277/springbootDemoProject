@@ -3,7 +3,6 @@ package com.reaksa.demo.controller;
 import com.reaksa.demo.dto.Product.ProductResponseDto;
 import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.dto.base.Response;
-import com.reaksa.demo.model.BaseResponseModel;
 import com.reaksa.demo.dto.Product.ProductDto;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.repository.ProductRepository;

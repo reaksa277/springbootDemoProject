@@ -5,8 +5,6 @@ import com.reaksa.demo.dto.Supplier.SupplierResponseDto;
 import com.reaksa.demo.dto.Supplier.UpdateSupplierDto;
 import com.reaksa.demo.dto.base.PaginatedResponse;
 import com.reaksa.demo.dto.base.Response;
-import com.reaksa.demo.model.BaseResponseModel;
-import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.service.SupplierService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

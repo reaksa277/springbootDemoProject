@@ -8,8 +8,6 @@ import com.reaksa.demo.entity.Stock;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.exception.model.UnprocessableEntityException;
 import com.reaksa.demo.mapper.StockMapper;
-import com.reaksa.demo.model.BaseResponseModel;
-import com.reaksa.demo.model.BaseResponseWithDataModel;
 import com.reaksa.demo.dto.Stock.StockDto;
 import com.reaksa.demo.dto.Stock.UpdateStockDto;
 import com.reaksa.demo.repository.ProductRepository;
@@ -17,11 +15,8 @@ import com.reaksa.demo.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
