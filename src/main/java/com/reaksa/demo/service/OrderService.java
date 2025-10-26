@@ -9,7 +9,9 @@ import com.reaksa.demo.entity.Order;
 import com.reaksa.demo.exception.model.ResourceNotFoundException;
 import com.reaksa.demo.mapper.OrderMapper;
 import com.reaksa.demo.repository.OrderRepository;
+import com.reaksa.demo.service.mail.NotificationService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 public class OrderService {
     @Autowired
     private OrderMapper mapper;
@@ -31,6 +34,9 @@ public class OrderService {
 
     @Autowired
     private ApplicationConfiguration appConfig;
+
+    @Autowired
+    private NotificationService  notificationService;
 
     public PaginatedResponse listOrdersWithPagination(Pageable pageable){
         Page<Order> orderPages = orderRepository.findAll(pageable);
@@ -47,8 +53,22 @@ public class OrderService {
 
     @Transactional
     public void createOrder(OrderDto payload) {
+        String threadName = Thread.currentThread().getName();
+
+        log.info("[SYNC-ORDER] Creating new Order | Thread: {}", threadName);
         // reserve stock for order
         stockManagementService.reserveStockForOrder(payload.getOrderItems());
+
+        // create order entity
+        Order order = mapper.toEntity(payload);
+        orderRepository.save(order);
+
+        log.info("[SYNC-ORDER] Order created successfully with Order: {} | Thread: {}", order.getId(), threadName);
+        log.info("[ASYNC-ORDER] Trigger and notification asynchronously for Order: {} | Thread: {}", order.getId(), threadName);
+
+        notificationService.sendOrderConfirmationNotification(order.getId(), "Your order has been completed");
+
+        log.info("[ASYNC-ORDER-COMPLETED] Completed order and triggered send notification.");
     }
 
     public OrderResponseDto updateOrderStatus(Long orderId, UpdateOrderDto payload) {
