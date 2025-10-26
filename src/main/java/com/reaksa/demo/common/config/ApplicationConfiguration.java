@@ -14,6 +14,7 @@ import java.util.HashMap;
 public class ApplicationConfiguration {
     private Security security;
     private Pagination pagination;
+    private JsonPlaceholder jsonPlaceholder;
 
     @Getter
     @Setter
@@ -31,6 +32,21 @@ public class ApplicationConfiguration {
 
         public String getUrlByResourse(String resourse) {
             return baseUrl.concat(uri.getOrDefault(resourse,""));
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class JsonPlaceholder {
+        private String baseUrl;
+        private HashMap<String,String> uri;
+
+        public String getPostUri() {
+            return uri.get("post");
+        }
+
+        public String getCommentsUri() {
+            return uri.get("comments");
         }
     }
 }
